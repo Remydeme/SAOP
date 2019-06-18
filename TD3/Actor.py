@@ -32,7 +32,7 @@ class Actor:
 
     def copy_to_target(self, tau=0.005):
         target_actor_weigts = self.target_actor.get_weights()
-        actor_weights = self.actor_get_weights()
+        actor_weights = self.actor.get_weights()
         index = 0
         for ta_weights, a_weihts in zip(target_actor_weigts, actor_weights):
             ta_weights = ta_weights * ( 1 - tau ) + a_weihts * tau

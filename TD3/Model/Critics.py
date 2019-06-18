@@ -30,9 +30,9 @@ class CriticsModel(keras.Model):
 
         self.hidden_layer_two = keras.layers.Dense(self.hidden_two_dim, activation='relu', name='hidden_layer_two')
 
-        initializer = tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3)
+        #initializer = tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3)
 
-        self.outputs = keras.layers.Dense(1, activation='relu', name='outputs', kernel_initializer=initializer)
+        self.outputs_1 = keras.layers.Dense(1, activation='linear', name='outputs')#, kernel_initializer=initializer)
 
 
 
@@ -42,10 +42,9 @@ class CriticsModel(keras.Model):
 
         self.hidden_layer_two_bis = keras.layers.Dense(self.hidden_two_dim, activation='relu', name='hidden_layer_two')
 
-        initializer = tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3)
+        #initializer = tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3)
 
-        self.outputs_bis = keras.layers.Dense(1, activation='relu', name='outputs', kernel_initializer=initializer)
-
+        self.outputs_2 = keras.layers.Dense(1, activation='linear', name='outputs_bis')#, kernel_initializer=initializer)
 
 
 
@@ -55,12 +54,25 @@ class CriticsModel(keras.Model):
 
         x = self.hidden_layer_two(x)
 
-        value = self.outputs(x)
+        value = self.outputs_1(x)
+
+
 
         x_bis = self.hidden_layer_one_bis(input)
 
         x_bis = self.hidden_layer_two_bis(x_bis)
 
-        value_bis = self.outputs_bis(x_bis)
+        value_bis = self.outputs_2(x_bis)
 
         return value, value_bis
+
+
+    def Q1(self, input):
+
+        x = self.hidden_layer_one(input)
+
+        x = self.hidden_layer_two(x)
+
+        value = self.outputs_1(x)
+
+        return value

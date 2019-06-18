@@ -32,21 +32,25 @@ class Critics:
 
 
     def get_value(self, state, action):
-        inputs = tf.concat([state, action], axis=-1)
+        inputs = tf.concat([state, action], axis=1)
         value, value_bis = self.critic(inputs)
         return value, value_bis
 
 
     def get_target_value(self, state, action):
-        inputs = tf.concat([state, action], axis=-1)
-        value, value_bis = self.critic(inputs)
+        inputs = tf.concat([state, action], axis=1)
+        value, value_bis = self.target_critic(inputs)
         return value, value_bis
 
+    def get_q1(self, state, action):
+        inputs = tf.concat([state, action], axis=1)
+        value = self.critic.Q1(inputs)
+        return value
 
 
     def train(self, state, action, y):
-        inputs = tf.concat([state, action], axis=-1)
-        error = self.critic.train_on_batch([inputs, inputs], y)
+        inputs = tf.concat([state, action], axis=1)
+        error = self.critic.train_on_batch(inputs, [y, y])
         return error
 
 
