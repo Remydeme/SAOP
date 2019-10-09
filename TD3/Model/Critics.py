@@ -38,9 +38,9 @@ class CriticsModel(keras.Model):
 
         # Second network neural net
 
-        self.hidden_layer_one_bis = keras.layers.Dense(self.hidden_one_dim, activation='relu', name='hidden_layer_one')
+        self.hidden_layer_one_bis = keras.layers.Dense(self.hidden_one_dim, activation='relu', name='hidden_layer_one_bis')
 
-        self.hidden_layer_two_bis = keras.layers.Dense(self.hidden_two_dim, activation='relu', name='hidden_layer_two')
+        self.hidden_layer_two_bis = keras.layers.Dense(self.hidden_two_dim, activation='relu', name='hidden_layer_two_bis')
 
         #initializer = tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3)
 

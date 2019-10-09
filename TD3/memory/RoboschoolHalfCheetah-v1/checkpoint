@@ -1,0 +1,2 @@
+model_checkpoint_path: "actor_RoboschoolHalfCheetah-v1_20190623-18_target"
+all_model_checkpoint_paths: "actor_RoboschoolHalfCheetah-v1_20190623-18_target"

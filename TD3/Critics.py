@@ -14,7 +14,7 @@ import tensorflow as tf
 class Critics:
 
 
-    def __init__(self, lr=0.001):
+    def __init__(self, lr=1e-3):
 
         self.critic = CriticsModel()
 
@@ -31,6 +31,7 @@ class Critics:
 
 
 
+# j'ai change l'axe et aussi les label c'est tout
     def get_value(self, state, action):
         inputs = tf.concat([state, action], axis=1)
         value, value_bis = self.critic(inputs)

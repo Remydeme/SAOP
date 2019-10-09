@@ -22,11 +22,11 @@ class Agent:
 
         self.env = env
         self.game = game
-        self.actor = ActorModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0], action_max=env.action_space.high[0])
-        self.actor_target = ActorModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0], action_max=env.action_space.high[0])
+        self.actor = ActorModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0], action_max=env.action_space.high[0]).to(device)
+        self.actor_target = ActorModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0], action_max=env.action_space.high[0]).to(device)
 
-        self.critic = CriticModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0])
-        self.critic_target = CriticModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0])
+        self.critic = CriticModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0]).to(device)
+        self.critic_target = CriticModel(state_dim=env.observation_space.shape[0], action_dim=env.action_space.shape[0]).to(device)
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=actor_lr)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=critic_lr)
@@ -43,6 +43,7 @@ class Agent:
         self.q_score_array = []
 
         current_time = datetime.now().strftime("%Y%m%d%H")
+
         name = game + current_time
 
         self.summary = SummaryWriter(name)
@@ -193,6 +194,7 @@ def play(agent, env, game):
             state = env.reset()
             episode += 1
             episode_iterations = 0
+
         # trick use by OPenAI we train the policy on random gaussian action
         if training_delay < step:
             action = agent.take_action(state=state, noisy_action=True)

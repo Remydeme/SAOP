@@ -119,20 +119,20 @@ class TD3Agent():
 
         action = self.actor.get_action(state=state)
 
-        action = action[0]
+        action = action[0] * self.env.action_space.high[0]
         # add noise
-        action = action + np.random.normal(0, self.actor_noise, size=np.shape(action))
+        action = action + np.random.normal(0, self.actor_noise, size=self.env.action_space.shape[0])
 
-        action = np.clip(action, self.env.action_space.low[0], self.env.action_space.high[0])
+        action = np.clip(action, self.env.action_space.low, self.env.action_space.high)
 
-        return action * self.env.action_space.high[0]
+        return action
 
 
     def take_action(self, state):
         """ Return the best action for the given state"""
         action = self.actor.get_action(state=state)
 
-        return action[0]
+        return action[0] * self.env.action_space.high[0]
 
 
 
@@ -174,7 +174,7 @@ class TD3Agent():
 
 
 def evaluateModel(env, agent, episode):
-    for e in range(20):
+    for e in range(100):
         s = env.reset()
         ep_memory = []
         ep_score = 0
@@ -182,7 +182,7 @@ def evaluateModel(env, agent, episode):
         while not done:
             s = s.reshape([1, env.observation_space.shape[0]])
             a = agent.take_action(state=s)
-            s, r, done, _ = env.step(a)
+            s, r, done, _ = env.step(a.numpy())
             ep_score += r
         ep_memory.append(ep_score)
     evaluation_score = np.mean(ep_memory)
@@ -200,15 +200,15 @@ def play(agent, env, game):
     train_summary_writer = tf.summary.create_file_writer(train_log_dir)
     scores = []
     batch_size = 100
-    training_delay = 0
+    training_delay = 1000
     step = 0
     e = 0
     done = False
     s = env.reset()
     episode_iterations = 0
     ep_score = 0
-    evaluation_delay = 100   # number of episode between each evaluation
-    while step < 300000:
+    evaluation_delay = 5000   # number of episode between each evaluation
+    while step < 3000000:
         if done:
             agent.updateNetworks(steps=episode_iterations, batch_size=batch_size)
             with train_summary_writer.as_default():
@@ -216,8 +216,6 @@ def play(agent, env, game):
                 tf.summary.scalar('episode score', ep_score, step=e)
                 tf.summary.scalar('step by episode', episode_iterations, step=e)
                 scores.append(ep_score)
-                if e % evaluation_delay == 0 and e != 0:
-                    evaluateModel(env=env, agent=agent, episode=e)
             print("episode {} | step {} | score {}".format(e, step, ep_score))
             ep_score = 0
             agent.save_model(critic_file_name="critic", actor_file_name="actor")
@@ -248,12 +246,16 @@ def play(agent, env, game):
 
         step += 1
 
+        with train_summary_writer.as_default():
+            if step % evaluation_delay == 0 and e != 0:
+                evaluateModel(env=env, agent=agent, episode=e)
+
     return agent
 
 
 
 if __name__ == "__main__":
-    game = "MountainCarContinuous-v0"
+    game = "RoboschoolHalfCheetah-v1"
     env = gym.make(game)
     env.seed(seed=0)
     agent = TD3Agent(env=env, game=game)
