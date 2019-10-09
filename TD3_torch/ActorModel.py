@@ -11,6 +11,11 @@ class ActorModel(nn.Module):
     hidden_2 = 300
 
     def __init__(self, state_dim, action_dim, action_max):
+        """
+        state_dim : dimension of the state 
+        action_dim: number of output neurons
+        action_max: Maimum value of the output
+        """
         super(ActorModel, self).__init__()
         self.action_max = action_max
 
